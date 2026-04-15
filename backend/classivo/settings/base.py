@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from decouple import config
 import dj_database_url
+from celery.schedules import crontab
 
 # Build paths inside the projecpath('api/v1/', include('api.scheduling.urls')),t like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api',
+     "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -117,9 +119,22 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# ──────────────────────────────────────────────
+# CELERY CORE CONFIGURATION
+# ──────────────────────────────────────────────
 CELERY_BROKER_URL = config('REDIS_URL')
 CELERY_RESULT_BACKEND = config('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+# ──────────────────────────────────────────────
+# CELERY BEAT SCHEDULER
+# ──────────────────────────────────────────────
+CELERY_BEAT_SCHEDULE = {
+    # 'task-name': {
+    #     'task': 'module.tasks.task_function',
+    #     'schedule': crontab(hour=0, minute=0),  # daily at midnight UTC
+    # },
+}
